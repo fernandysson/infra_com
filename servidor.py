@@ -3,7 +3,7 @@
 import socket
 import os
 
-porta = 25251
+porta = 2525
 prompt = ">> "
 p2 = "<< "
 
@@ -13,12 +13,13 @@ class conexao:
     
     def __init__ (self, port):
         self.login = ""
-        self.dir = ""
-        self.prompt_usr = (self.login + ":" + self.dir + prompt)
+        self.dire = ""
+        self.msg = ""
+        self.prompt_usr = (self.login + ":" + self.dire + prompt)
         ##self.login = ""
         self.aceito = 0
 	self.cont = 0
-        #self.dir = ""
+        #self.dire = ""
         #create an INET, STREAMing socket
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         #bind the socket to a public host,
@@ -37,18 +38,21 @@ class conexao:
         print(p2 + self.msg_r)
 
     def cad (self):
-        self.comunica("Tem cad?")
-        self.recebe()
-       
+        #00
+        if (self.msg == "Login nao encontrado"):
+            self.recebe()
+        self.comunica("Tem cadastro na BD?")
+        self.recebe()      
         self.resposta()
-       
         if self.msg_r == 'n':
-            self.comunica("vou lhe cadastra, bb...")
+            #01
+            self.comunica("Voce deve se cadastrar para acessar uma pasta no sistema.")
             self.recebe()
             self.resposta()
             self.cadastra()
         else:
-            self.comunica("fazer o login entao...")
+            #001
+            self.comunica("Qual eh o seu login?")
             self.recebe()
             self.resposta()
             self.log()
@@ -56,67 +60,43 @@ class conexao:
     def log (self):
         st = "0"
         achei = 0
-        
-
-        self.comunica("login?")
-        self.recebe()
-        #Login
-        self.resposta()
-        ##
-
-        ##########################################
-        #######################   CRITICO AJEITTAR
-        ##########################################
         arq = open ("usrs.txt", "a+")
         arq.seek(0,0)
-        
         while(st != ""):
-            print ("login da vez >> " + st + "\n")
-            print ("login procurado >> " + self.msg_r + "\n")
             st = arq.readline()
             st = st.replace("\n", "")
+            print ("login da vez >> " + st )
+            print ("login procurado >> " + self.msg_r)
             if(st == (self.msg_r)):
                 print ("Achei seu login")
                 self.login = st
-                self.dir = ("usr/" + self.login)
+                self.dire = ("usr/" + self.login)
                 achei = 1
                 self.comunica("Voce esta logado")
-		self.comandos()
-            if achei == 0:
-            	print("login nao achado")
-            	self.cadastra()
-       
-	
+                break
+        if achei == 0:
+            self.msg = "Login nao encontrado"
+            print(self.msg)
+            self.comunica(self.msg)
+            self.cad()
 	arq.close()
 
     
 	
 
     def cadastra (self):
-
-        self.comunica("login?")
+        #03
+        self.comunica("Por favor digite o login desejado...")
         self.recebe()
-
-        #Login...
         self.resposta()
-
         self.login = self.msg_r
-
+        self.dire = ("usr/" + self.login)
         arq = open ("usrs.txt", "a+")
-
         arq.write(self.login + "\n")
         arq.close()
-
-	
-        os.system("mkdir usr/" + self.login + " && cd usr/" + self.login)
-      
-        self.dir = ("usr/" + self.login)
-    	self.comunica(self.prompt_usr)
-        self.recebe()
-            ##Ok.
-	self.comunica(" Cadastrado ! \n")
-        self.resposta()
-            ##self.desconecta()
+        os.system("mkdir " + self.dire)
+    	#05
+        self.comunica("Voce ja pode me dar comandos a serem executados na sua pasta pessoal.\n" + self.prompt_usr)
         self.comandos()
 
     def espera(self):
@@ -128,19 +108,19 @@ class conexao:
         self.clisock.close()
 
     def comandos(self):
-
-      #  self.comunica(self.msg_r)
+        
         self.recebe()
-
-        print (self.s)
-        print("recebi: " + self.msg_r)
+        print ("# # # # #")
+        print self.s
+        print("recebi: " + self.msg_r + "\n# # # # #")
 
         if(self.msg_r == "q"):
             print("adeus")
+            self.desconecta()
         
         elif(self.msg_r == "ls"):
 	    
-            os.system("ls " + self.dir + " > retorno")
+            os.system("ls " + self.dire + " > retorno")
             arq = open("retorno", "r")
             self.comunica(arq.read())
             arq.close()
@@ -149,27 +129,27 @@ class conexao:
          
             self.comunica("Digite o nome do diretorio, pareia... \n")
             self.recebe()
-	    print(self.dir)
-            os.system("mkdir " + self.dir + "/" + self.msg_r)            
+	    print(self.dire)
+            os.system("mkdir " + self.dire + "/" + self.msg_r)            
         
         elif(self.msg_r == "rename"):
       
 
             self.comunica("Digite o nome do arquivo antigo, pareia... \n" + prompt)
             self.recebe()
-            tmp0 = self.dir + "/" + self.msg_r
-            tmp1 = (self.dir + "/ZzZzZ")
+            tmp0 = self.dire + "/" + self.msg_r
+            tmp1 = (self.dire + "/ZzZzZ")
             os.system("mv " + tmp0 + " " + tmp1)
             self.comunica("Digite o nome do novo arquivo, pareia...")
             self.recebe()
-            tmp0 = self.dir + "/" + self.msg_r
+            tmp0 = self.dire + "/" + self.msg_r
             os.system("mv " + tmp1 + " " + tmp0)            
 
         elif(self.msg_r == "rm"):
        
             self.comunica("Digite o nome do arquivo a ser deletado, pareia... \n")
             self.recebe()
-            os.system("rm -r " + self.dir + "/" + self.msg_r)    
+            os.system("rm -r " + self.dire + "/" + self.msg_r)    
  
    # elif(self.msg_r == "upload"):
         ##

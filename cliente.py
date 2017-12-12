@@ -5,7 +5,7 @@ import socket
 import os
 
 prompt = ">> "
-porta = 25251
+porta = 2525
 class Cliente:
 
     def __init__ (self):
@@ -16,32 +16,32 @@ class Cliente:
         self.s.send(msg)
 
     def chegada (self):
-
-        self.comunica("oi, estou chegando...")
+        #00000000000000000000000000000000
+        self.comunica("Ola servidor, quero acessar uma pasta para meus arquivos...")
         self.recebe()
-        msg = raw_input(self.msg_r + "... (s ou n)\n" +  prompt)
+        msg = raw_input(self.msg_r + " (Digite [s / n]) >> ")
+        #000
         self.comunica(msg)
-        self.recebe()
-        self.s.send("show...")
-
-        print(self.msg_r)
-
         if msg == "n" :
-            msg = raw_input(self.s.recv(100)+ "\n" + prompt)
+            #02
+            self.recebe()
+            self.s.send("Tudo bem.")
+            self.recebe()
+            msg = raw_input( self.msg_r + "\n" + prompt)
+            #04
             self.comunica(msg)
             self.recebe()
-            print(self.msg_r+prompt)
-            self.s.send("OK")
-	    self.recebe()
-	    print(self.msg_r + "\n")
+            self.resp()
 	    self.comando()
         else:
-            msg = raw_input(self.s.recv(100) + "\n" + prompt)
+            self.recebe()
+            msg = raw_input( self.msg_r + " " + prompt)
+            #002
             self.comunica(msg)  
             self.recebe()
-	    print(self.msg_r + "\n")
-	    self.comando()       
-    
+            self.resp()
+            if (self.msg_r == "Login nao encontrado"):
+                self.chegando()
 
     def saida (self):
         self.s.close()
@@ -56,14 +56,13 @@ class Cliente:
         ##o servidor esta esperando umas mensagem / / o comando ##
 	
         while 1:
-	    print(" Digite seu comando :\n " )
-            msg = raw_input(prompt)
-
+            msg = raw_input("   Digite seu comando >> ")
+            
             if (msg == "ls"):
                 self.comunica(msg)
                 self.recebe()
-                print(self.msg_r)
-		raw_input("Press enter to continue")
+		self.resp()
+                raw_input("Press enter to continue")
 		os.system("clear")
 		
 
