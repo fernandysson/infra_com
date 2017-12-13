@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+	#!/usr/bin/python2.7
 #teste
 
 import socket
@@ -28,11 +28,13 @@ class Cliente:
             self.s.send("Tudo bem.")
             self.recebe()
             msg = raw_input( self.msg_r + "\n" + prompt)
-            #04
+	    print("#04")
             self.comunica(msg)
             self.recebe()
             self.resp()
-	    self.comando()
+            print("#05")	
+#	    self.comando()
+	    self.chegada()
         else:
             self.recebe()
             msg = raw_input( self.msg_r + " " + prompt)

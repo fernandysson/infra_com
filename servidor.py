@@ -95,9 +95,10 @@ class conexao:
         arq.write(self.login + "\n")
         arq.close()
         os.system("mkdir " + self.dire)
-    	#05
+    	print("#05")
         self.comunica("Voce ja pode me dar comandos a serem executados na sua pasta pessoal.\n" + self.prompt_usr)
-        self.comandos()
+#        self.comandos()
+	self.cad()
 
     def espera(self):
         self.clisock, (self.remhost, self.remport) = self.s.accept()
