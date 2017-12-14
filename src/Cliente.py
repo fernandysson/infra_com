@@ -17,16 +17,19 @@ class Cliente():
 		raw_input(self.msg)
 		self.s.send(msg)
 
+
 	def send_recv(self, msg):
 		self.s.send(msg)
 		self.msg = self.s.recv(n)
 		print self.msg
 
-	def send_recv_cmd(self, msg):
-		self.s.send(msg)
-		self.cmd(msg)
+	def recv_send_cmd(self):
 		self.msg = self.s.recv(n)
-		print self.msg	
+		msg = raw_input(self.msg)
+		self.s.send(msg)
+		##
+		self.cmd(msg)
+
 	
 	def cmd(self, msg):
 		if (msg == 'Q'):
@@ -34,6 +37,9 @@ class Cliente():
 
 		elif (msg == "cd"):
 			self.recv_send()
+		elif (msg == "ls"):
+			pass
+		
 
 	def desconecta():
 		self.s.recv(n)
@@ -43,9 +49,13 @@ S = Cliente()
 S.send_recv("Quero conexao!")
 msg = raw_input(">> ")
 S.send_recv(msg)
-msg = raw_input("Digite um comando...\n>> ")
+## login enviado!
 for i in range (1,5):
-	S.send_recv_cmd(msg)
+	S.recv_send_cmd()
+	S.s.recv(n)
+	print(S.msg)
+	raw_input("Digite ENTER para continuar.")
+
 
 
 

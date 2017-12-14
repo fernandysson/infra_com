@@ -16,7 +16,7 @@ class Conexao (threading.Thread):
 		self.name = threadName
 		self.conexoes = []
 		self.count = 0
-		self.exitFlag =2 
+		self.exitFlag = 1 
 
 	def run(self):
 		while (self.exitFlag != 0):
