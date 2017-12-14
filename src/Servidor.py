@@ -5,7 +5,10 @@ import Comunicacao
 
 n = 100
 m = "Digite o parametro."
-
+p = ">> "
+e = "ERRO..."
+b = "/"
+pp = "<< "
 
 class Servidor(threading.Thread):
 	
@@ -25,6 +28,7 @@ class Servidor(threading.Thread):
 	def autenticar (self):
 		self.recv_send("Digite o login...")
 		self.recv_send("Vou buscar...\n  ...\n    ...\n      ...")
+		##
 		self.login = self.msg
 		self.dir = ("usr/"+self.login)
 		if ( self.busca() == 0 ):
@@ -32,7 +36,6 @@ class Servidor(threading.Thread):
 		while (self.exit != "QUIT"):
 			self.receberComandos()
 			self.clisock.send(self.msg)
-			raw_input("Digite ENTER para continuar.")
 		self.desconectar()
 
 	def desconectar (self):
@@ -58,12 +61,13 @@ class Servidor(threading.Thread):
 	def recv_send(self, msg):
 		self.msg = self.clisock.recv(n)
 		self.clisock.send(msg)
-		print self.msg
+		print pp + self.msg
 
 	def send_recv(self, msg):
 		self.clisock.send(msg)
+		##!!
 		self.msg = self.clisock.recv(n)
-		print self.msg
+		print pp + self.msg
 	
 	def test (self, arquivo, tipo):
 		aux = os.system("test" + tipo + arquivo)
@@ -73,14 +77,24 @@ class Servidor(threading.Thread):
 			return 0
 
 	def receberComandos(self):
-		self.recv_send("Digite um comando.")
+		self.send_recv("Digite um comando.\n" + p)
+		##
 		if (self.msg == "Q"):
-			self.desconecta()
+			self.desconectar()
 		elif (self.msg == "cd"):
 			self.send_recv(m)
 			if (self.test (self.msg, " -d ")):
-				os.system()
-
+				self.dir = self.dir + self.msg
+				self.msg = self.dir + p
+			else:
+				self.msg = e
+		
+		elif (self.msg == "ls"):
+			os.system("ls " + self.dir + " > log/retorno.txt")
+			arq = open ("log/retorno.txt", "r")
+			self.msg = arq.read()
+			arq.close()
+			
 
 
 
