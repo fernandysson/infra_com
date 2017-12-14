@@ -34,7 +34,8 @@ class Servidor(threading.Thread):
 		if ( self.busca() == 0 ):
 			self.cadastrar()
 		while (self.exit != "QUIT"):
-			self.receberComandos()
+			self.recv_send("Ok.")
+			self.tratarComando()
 			self.clisock.send(self.msg)
 		self.desconectar()
 
@@ -65,7 +66,7 @@ class Servidor(threading.Thread):
 
 	def send_recv(self, msg):
 		self.clisock.send(msg)
-		##!!
+		##
 		self.msg = self.clisock.recv(n)
 		print pp + self.msg
 	
@@ -76,9 +77,8 @@ class Servidor(threading.Thread):
 		else:
 			return 0
 
-	def receberComandos(self):
-		self.send_recv("Digite um comando.\n" + p)
-		##
+	def tratarComando(self):
+		print ("CMD recebido: " + self.msg)
 		if (self.msg == "Q"):
 			self.desconectar()
 		elif (self.msg == "cd"):

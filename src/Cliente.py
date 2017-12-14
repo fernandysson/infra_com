@@ -4,7 +4,7 @@ import Comunicacao
 
 porta = 2525
 n=1024
-
+p = ">> "
 class Cliente():
 
 	def __init__ (self):
@@ -25,9 +25,10 @@ class Cliente():
 
 	def recv_send_cmd(self):
 		self.msg = self.s.recv(n)
-		msg = raw_input(self.msg)
+		##01
+		msg = raw_input(p + self.msg)
 		self.s.send(msg)
-		##
+		##comando enviado
 		self.cmd(msg)
 
 	
@@ -38,7 +39,8 @@ class Cliente():
 		elif (msg == "cd"):
 			self.recv_send()
 		elif (msg == "ls"):
-			pass
+			self.msg = self.s.recv(n)
+			print(self.msg)
 		
 
 	def desconecta():
@@ -51,9 +53,9 @@ msg = raw_input(">> ")
 S.send_recv(msg)
 ## login enviado!
 for i in range (1,5):
-	S.recv_send_cmd()
-	S.s.recv(n)
-	print(S.msg)
+	msg = raw_input("Digitar comando: ")
+	S.send_recv(msg)
+	S.cmd(msg)
 	raw_input("Digite ENTER para continuar.")
 
 
