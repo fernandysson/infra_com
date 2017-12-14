@@ -1,126 +1,57 @@
-	#!/usr/bin/python2.7
-#teste
-
-import socket
-import os
-
-prompt = ">> "
-porta = 2525
-class Cliente:
-
-    def __init__ (self):
-        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.s.connect(('localhost', porta))
-
-    def comunica (self, msg):
-        self.s.send(msg)
-
-    def chegada (self):
-        #00000000000000000000000000000000
-        self.comunica("Ola servidor, quero acessar uma pasta para meus arquivos...")
-        self.recebe()
-        msg = raw_input(self.msg_r + " (Digite [s / n]) >> ")
-        #000
-        self.comunica(msg)
-        if msg == "n" :
-            #02
-            self.recebe()
-            self.s.send("Tudo bem.")
-            self.recebe()
-            msg = raw_input( self.msg_r + "\n" + prompt)
-	    print("#04")
-            self.comunica(msg)
-            self.recebe()
-            self.resp()
-            print("#05")	
-#	    self.comando()
-	    self.chegada()
-        else:
-            self.recebe()
-            msg = raw_input( self.msg_r + " " + prompt)
-            #002
-            self.comunica(msg)  
-            self.recebe()
-            self.resp()
-            if (self.msg_r == "Login nao encontrado"):
-                self.chegando()
-
-    def saida (self):
-        self.s.close()
-
-    def recebe(self):
-        self.msg_r = self.s.recv(100)
-
-    def resp(self):
-        print(self.msg_r)
-
-    def comando (self):
-        ##o servidor esta esperando umas mensagem / / o comando ##
-	
-        while 1:
-            msg = raw_input("   Digite seu comando >> ")
-            
-            if (msg == "ls"):
-                self.comunica(msg)
-                self.recebe()
-		self.resp()
-                raw_input("Press enter to continue")
-		os.system("clear")
-		
-
-            elif (msg == "mkdir"):
-                ##
-		self.comunica(msg)
-                self.recebe()
-                self.comunica(raw_input(self.msg_r))
-		raw_input("Press enter to continue")
-		os.system("clear")
-		
-
-            elif (msg == "rename"):
-                ##
-                self.comunica(msg)
-                self.recebe()
-                self.comunica(raw_input(self.msg_r))
-                self.recebe()
-                self.comunica(raw_input(self.msg_r))
-		raw_input("Press enter to continue")
-		os.system("clear")
-		
-
-            elif (msg == "rm"):
-                ##
-                self.comunica(msg)
-                self.recebe()
-                self.comunica(raw_input(self.msg_r))   
-                raw_input("Press enter to continue")
-		os.system("clear")
-		
-
-      ##      elif (msg == "upload"):
-                ##
-        ##    elif (msg == "download"):
-                ##
-          ##  elif (msg == "share"):
-                ##
-
-
-
-            elif (msg == "q"):
-		self.comunica(msg)
-                print("FLWWWWWWWw! \n ")
-		break
-
-            else:
-		 os.system("clear")  
-		 print("	Digite um comando valido!	 \n")
-		 raw_input("Press enter to continue")
-		 os.system("clear")  
-
-##s.send(cmd)
-##print s.recv(100)
-os.system("clear")
-cliente = Cliente()
-cliente.chegada()
-cliente.comando()
-cliente.saida()
+  1 import socket
+  2 import os
+  3 import Comunicacao
+  4 
+  5 porta = 2525
+  6 n=1024
+  7 
+  8 class Cliente():
+  9 
+ 10         def __init__ (self):
+ 11                 self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+ 12                 self.s.connect(('localhost', porta))
+ 13                 self.msg = ""
+ 14 
+ 15         def recv_send(self):
+ 16                 self.msg = self.s.recv(n)
+ 17                 raw_input(self.msg)
+ 18                 self.s.send(msg)
+ 19 
+ 20 
+ 21         def send_recv(self, msg):
+ 22                 self.s.send(msg)
+ 23                 self.msg = self.s.recv(n)
+ 24                 print self.msg
+ 25 
+ 26         def recv_send_cmd(self, msg):
+ 27                 self.msg = self.s.recv(n)
+ 28                 msg = raw_input(self.msg)
+ 29                 self.s.send(msg)
+ 30                 ##
+ 31                 self.cmd(msg)
+ 32                 
+ 33 
+ 34         def cmd(self, msg):
+ 35                 if (msg == 'Q'):
+ 36                         self.desconecta()
+ 37 
+ 38                 elif (msg == "cd"):
+ 39                         self.recv_send()
+ 40                 elif (msg == "ls"):
+ 41                         pass 
+ 42 
+ 43 
+ 44         def desconecta():
+ 45                 self.s.recv(n)
+ 46                 self.s.close()
+ 47 
+ 48 S = Cliente()
+ 49 S.send_recv("Quero conexao!")
+ 50 msg = raw_input(">> ")
+ 51 S.send_recv(msg)
+ 52 ## login enviado!
+ 53 for i in range (1,5):
+ 54         S.recv_send_cmd()
+ 55         S.s.recv(n)
+ 56         print(self.msg)
+ 57         raw_input("Digite ENTER para continuar.")
